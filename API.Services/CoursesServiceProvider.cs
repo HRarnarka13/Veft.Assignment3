@@ -32,12 +32,12 @@ namespace API.Services
                            join courseTemplate in _db.CourseTemplates on course.TemplateID equals courseTemplate.ID
                            select new CourseDTO
                            {
-                               ID = course.ID,
-                               TemplateID = courseTemplate.TemplateID,
-                               Name = courseTemplate.Name,
-                               Semester = course.Semester,
-                               StartDate = course.StartDate,
-                               EndDate = course.EndDate,
+                               ID           = course.ID,
+                               TemplateID   = courseTemplate.TemplateID,
+                               Name         = courseTemplate.Name,
+                               Semester     = course.Semester,
+                               StartDate    = course.StartDate,
+                               EndDate      = course.EndDate,
                                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID)
                            }).ToList();
             return courses;
@@ -56,22 +56,22 @@ namespace API.Services
                           where c.ID == id
                           select new CourseDetailsDTO
                           {
-                              ID = c.ID,
-                              TemplateID = ct.TemplateID,
-                              Name = ct.Name,
-                              Description = ct.Description,
-                              Semester = c.Semester,
-                              StartDate = c.StartDate,
-                              EndDate = c.EndDate,
+                              ID           = c.ID,
+                              TemplateID   = ct.TemplateID,
+                              Name         = ct.Name,
+                              Description  = ct.Description,
+                              Semester     = c.Semester,
+                              StartDate    = c.StartDate,
+                              EndDate      = c.EndDate,
                               StudentCount = _db.StudentEnrollment.Where(x => x.CourseID == c.ID).Count(),
-                              Students = (from sr in _db.StudentEnrollment
-                                          join s in _db.Students on sr.StudentID equals s.ID
-                                          where sr.CourseID == c.ID
-                                          select new StudentDTO
-                                          {
-                                              SSN = s.SSN,
-                                              Name = s.Name
-                                          }).ToList()
+                              Students     = (from sr in _db.StudentEnrollment
+                                              join s in _db.Students on sr.StudentID equals s.ID
+                                              where sr.CourseID == c.ID
+                                              select new StudentDTO
+                                              {
+                                                SSN  = s.SSN,
+                                                Name = s.Name
+                                              }).ToList()
                           }).SingleOrDefault();
             if (course == null)
             {
@@ -94,11 +94,11 @@ namespace API.Services
             }
             Entities.Course course = new Entities.Course
             {
-                ID = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
+                ID         = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
                 TemplateID = courseTemplate.ID,
-                Semester = newCourse.Semester,
-                StartDate = newCourse.StartDate,
-                EndDate = newCourse.EndDate
+                Semester   = newCourse.Semester,
+                StartDate  = newCourse.StartDate,
+                EndDate    = newCourse.EndDate
             };
             _db.Courses.Add(course);
 
@@ -106,13 +106,13 @@ namespace API.Services
 
             return new CourseDetailsDTO
             {
-                ID = course.ID,
-                TemplateID = courseTemplate.TemplateID,
-                Name = courseTemplate.Name,
-                Description = courseTemplate.Description,
-                Semester = course.Semester,
-                StartDate = newCourse.StartDate,
-                EndDate = newCourse.EndDate,
+                ID           = course.ID,
+                TemplateID   = courseTemplate.TemplateID,
+                Name         = courseTemplate.Name,
+                Description  = courseTemplate.Description,
+                Semester     = course.Semester,
+                StartDate    = newCourse.StartDate,
+                EndDate      = newCourse.EndDate,
                 StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID)
             };
         }
@@ -142,29 +142,29 @@ namespace API.Services
 
             // Update the start and end date based on the view model
             course.StartDate = updateCourse.StartDate;
-            course.EndDate = updateCourse.EndDate;
+            course.EndDate   = updateCourse.EndDate;
 
             // If all is successfull, we save our changes
             _db.SaveChanges();
 
             return new CourseDetailsDTO
             {
-                ID = course.ID,
-                TemplateID = courseTemplate.TemplateID,
-                Name = courseTemplate.Name,
-                Description = courseTemplate.Description,
-                Semester = course.Semester,
-                StartDate = updateCourse.StartDate,
-                EndDate = updateCourse.EndDate,
+                ID           = course.ID,
+                TemplateID   = courseTemplate.TemplateID,
+                Name         = courseTemplate.Name,
+                Description  = courseTemplate.Description,
+                Semester     = course.Semester,
+                StartDate    = updateCourse.StartDate,
+                EndDate      = updateCourse.EndDate,
                 StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID),
-                Students = (from sr in _db.StudentEnrollment
-                            join s in _db.Students on sr.StudentID equals s.ID
-                            where sr.CourseID == course.ID
-                            select new StudentDTO
-                            {
-                                SSN = s.SSN,
-                                Name = s.Name
-                            }).ToList()
+                Students     = (from sr in _db.StudentEnrollment
+                                join s in _db.Students on sr.StudentID equals s.ID
+                                where sr.CourseID == course.ID
+                                select new StudentDTO
+                                {
+                                    SSN  = s.SSN,
+                                    Name = s.Name
+                                }).ToList()
             };
         }
         /// <summary>
@@ -223,12 +223,12 @@ namespace API.Services
                            where c.Semester == semester
                            select new CourseDTO
                            {
-                               ID = c.ID,
-                               TemplateID = ct.TemplateID,
-                               Name = ct.Name,
-                               Semester = c.Semester,
-                               StartDate = c.StartDate,
-                               EndDate = c.EndDate,
+                               ID           = c.ID,
+                               TemplateID   = ct.TemplateID,
+                               Name         = ct.Name,
+                               Semester     = c.Semester,
+                               StartDate    = c.StartDate,
+                               EndDate      = c.EndDate,
                                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == c.ID)
                            }).ToList();
 
@@ -255,7 +255,7 @@ namespace API.Services
                                          where se.CourseID == courseID
                                          select new StudentDTO
                                          {
-                                             SSN = s.SSN,
+                                             SSN  = s.SSN,
                                              Name = s.Name
                                          }).ToList();
             return students;
@@ -270,7 +270,7 @@ namespace API.Services
         public StudentDTO AddStudentToCourse(int courseID, StudentViewModel newStudent)
         {
             // Check if the course exists
-            var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
+            var course        = _db.Courses.SingleOrDefault(x => x.ID == courseID);
             var courseDetails = _db.CourseTemplates.SingleOrDefault(x => x.ID == course.TemplateID);
             if (course == null)
             {
@@ -287,14 +287,14 @@ namespace API.Services
             _db.StudentEnrollment.Add(new Entities.StudentEnrollment
             {
                 StudentID = student.ID,
-                CourseID = course.ID
+                CourseID  = course.ID
             });
 
             _db.SaveChanges();
 
             return new StudentDTO
             {
-                SSN = student.SSN,
+                SSN  = student.SSN,
                 Name = student.Name
             };
         }
@@ -315,7 +315,7 @@ namespace API.Services
                                   where sr.CourseID == course.ID && s.SSN == studentSSN
                                   select new StudentDTO
                                   {
-                                      SSN = s.SSN,
+                                      SSN  = s.SSN,
                                       Name = s.Name
                                   }).SingleOrDefault();
 
