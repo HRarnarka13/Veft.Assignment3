@@ -19,7 +19,6 @@ namespace API.Models
         /// </summary>
         public string Name { get; set; }
 
-
         /// <summary>
         /// Repersents the template id of a single course
         /// Examble: T-504-ITML
