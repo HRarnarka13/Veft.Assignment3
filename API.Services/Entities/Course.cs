@@ -37,5 +37,9 @@ namespace API.Services.Entities
         /// Example "201501"
         /// </summary>
         public string Semester { get; set; }
+        /// <summary>
+        /// The maximum students allowed to be registerd in the course
+        /// </summary>
+        public int MaxStudents { get; set; }
     }
 }

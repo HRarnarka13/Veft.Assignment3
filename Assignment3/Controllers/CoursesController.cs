@@ -189,6 +189,10 @@ namespace Assignment3.Controllers
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+            catch (CourseIsFullException)
+            {
+                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+            }
         }
         #endregion
 
@@ -216,6 +220,9 @@ namespace Assignment3.Controllers
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
         }
+        #endregion
+
+        #region Courses/{id}/waitinglist
         #endregion
     }
 }

@@ -26,5 +26,11 @@ namespace API.Services.Entities
         /// The ID of the course the student is enrolled in
         /// </summary>
         public int CourseID { get; set; }
+
+        /// <summary>
+        /// Flag to indicate if a student is on the waiting list for that course
+        /// Note: This is not a scalible and eligant solution but is fine for this assignment
+        /// </summary>
+        public Boolean IsOnWaitingList { get; set; }
     }
 }

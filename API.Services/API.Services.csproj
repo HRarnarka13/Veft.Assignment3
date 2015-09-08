@@ -54,6 +54,7 @@
     <Compile Include="Entities\CourseTemplate.cs" />
     <Compile Include="Entities\Student.cs" />
     <Compile Include="Entities\StudentEnrollment.cs" />
+    <Compile Include="Exceptions\CourseIsFullException.cs" />
     <Compile Include="Exceptions\CourseNotFoundException.cs" />
     <Compile Include="Exceptions\DeleteFromDatabaseException.cs" />
     <Compile Include="Exceptions\StudentNotFoundException.cs" />

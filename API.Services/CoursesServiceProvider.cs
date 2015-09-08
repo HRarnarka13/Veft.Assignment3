@@ -92,6 +92,7 @@ namespace API.Services
             {
                 throw new TemplateCourseNotFoundException();
             }
+
             Entities.Course course = new Entities.Course
             {
                 ID         = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
@@ -141,8 +142,9 @@ namespace API.Services
             }
 
             // Update the start and end date based on the view model
-            course.StartDate = updateCourse.StartDate;
-            course.EndDate   = updateCourse.EndDate;
+            course.StartDate   = updateCourse.StartDate;
+            course.EndDate     = updateCourse.EndDate;
+            course.MaxStudents = updateCourse.MaxStudents;
 
             // If all is successfull, we save our changes
             _db.SaveChanges();
@@ -284,12 +286,18 @@ namespace API.Services
                 throw new StudentNotFoundException();
             }
 
+            // Check if the course is full
+            if (course.MaxStudents >= _db.StudentEnrollment.Count(x => x.CourseID == course.ID))
+            {
+                throw new CourseIsFullException();
+            }
+
             _db.StudentEnrollment.Add(new Entities.StudentEnrollment
             {
                 StudentID = student.ID,
-                CourseID  = course.ID
+                CourseID = course.ID,
+                IsOnWaitingList = false
             });
-
             _db.SaveChanges();
 
             return new StudentDTO

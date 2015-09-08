@@ -37,5 +37,11 @@ namespace API.Models
         /// </summary>
         [Required]
         public DateTime EndDate { get; set; }
+
+        /// <summary>
+        /// The maximum students allowed to be registerd in the course
+        /// </summary>
+        [Required]
+        public int MaxStudents { get; set; }
     }
 }
