@@ -32,5 +32,11 @@ namespace API.Services.Entities
         /// Note: This is not a scalible and eligant solution but is fine for this assignment
         /// </summary>
         public Boolean IsOnWaitingList { get; set; }
+
+        /// <summary>
+        /// Flag to indicate if a student is active in a course
+        /// Note: This is not a scalible and eligant solution but is fine for this assignment
+        /// </summary>
+        public Boolean IsInactive { get; set; }
     }
 }
