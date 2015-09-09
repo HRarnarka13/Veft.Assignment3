@@ -65,13 +65,13 @@ namespace API.Services
                               EndDate = c.EndDate,
                               StudentCount = _db.StudentEnrollment.Where(x => x.CourseID == c.ID).Count(),
                               Students = (from sr in _db.StudentEnrollment
-                                          join s in _db.Students on sr.StudentID equals s.ID
-                                          where sr.CourseID == c.ID
-                                          select new StudentDTO
-                                          {
+                                              join s in _db.Students on sr.StudentID equals s.ID
+                                              where sr.CourseID == c.ID
+                                              select new StudentDTO
+                                              {
                                               SSN = s.SSN,
-                                              Name = s.Name
-                                          }).ToList()
+                                                Name = s.Name
+                                              }).ToList()
                           }).SingleOrDefault();
             if (course == null)
             {
@@ -161,13 +161,13 @@ namespace API.Services
                 EndDate = updateCourse.EndDate,
                 StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID),
                 Students = (from sr in _db.StudentEnrollment
-                            join s in _db.Students on sr.StudentID equals s.ID
-                            where sr.CourseID == course.ID
-                            select new StudentDTO
-                            {
+                                join s in _db.Students on sr.StudentID equals s.ID
+                                where sr.CourseID == course.ID
+                                select new StudentDTO
+                                {
                                 SSN = s.SSN,
-                                Name = s.Name
-                            }).ToList()
+                                    Name = s.Name
+                                }).ToList()
             };
         }
         /// <summary>
@@ -311,12 +311,12 @@ namespace API.Services
             }
             else
             {
-                _db.StudentEnrollment.Add(new Entities.StudentEnrollment
-                {
+            _db.StudentEnrollment.Add(new Entities.StudentEnrollment
+            {
                     StudentID       = student.ID,
                     CourseID        = course.ID,
-                    IsOnWaitingList = false
-                });
+                IsOnWaitingList = false
+            });
             }
 
             _db.SaveChanges();
@@ -327,7 +327,7 @@ namespace API.Services
                 Name = student.Name
             };
         }
-
+        
         /// <summary>
         /// Gets a student with the given SSN and that is registered in the given course
         /// </summary>
