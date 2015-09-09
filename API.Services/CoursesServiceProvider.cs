@@ -32,13 +32,15 @@ namespace API.Services
                            join courseTemplate in _db.CourseTemplates on course.TemplateID equals courseTemplate.ID
                            select new CourseDTO
                            {
-                               ID = course.ID,
-                               TemplateID = courseTemplate.TemplateID,
-                               Name = courseTemplate.Name,
-                               Semester = course.Semester,
-                               StartDate = course.StartDate,
-                               EndDate = course.EndDate,
-                               StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID)
+                               ID           = course.ID,
+                               TemplateID   = courseTemplate.TemplateID,
+                               Name         = courseTemplate.Name,
+                               Semester     = course.Semester,
+                               StartDate    = course.StartDate,
+                               EndDate      = course.EndDate,
+                               StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID 
+                                                                            && x.IsActive == true 
+                                                                            && x.IsOnWaitingList == false)
                            }).ToList();
             return courses;
         }
@@ -56,20 +58,24 @@ namespace API.Services
                           where c.ID == id
                           select new CourseDetailsDTO
                           {
-                              ID = c.ID,
-                              TemplateID = ct.TemplateID,
-                              Name = ct.Name,
-                              Description = ct.Description,
-                              Semester = c.Semester,
-                              StartDate = c.StartDate,
-                              EndDate = c.EndDate,
-                              StudentCount = _db.StudentEnrollment.Where(x => x.CourseID == c.ID).Count(),
-                              Students = (from sr in _db.StudentEnrollment
+                              ID           = c.ID,
+                              TemplateID   = ct.TemplateID,
+                              Name         = ct.Name,
+                              Description  = ct.Description,
+                              Semester     = c.Semester,
+                              StartDate    = c.StartDate,
+                              EndDate      = c.EndDate,
+                              StudentCount = _db.StudentEnrollment.Where(x => x.CourseID == c.ID
+                                                                            && x.IsOnWaitingList == false
+                                                                            && x.IsActive == true).Count(),
+                              Students     = (from sr in _db.StudentEnrollment
                                               join s in _db.Students on sr.StudentID equals s.ID
                                               where sr.CourseID == c.ID
+                                              &&    sr.IsActive == true
+                                              &&    sr.IsOnWaitingList == false
                                               select new StudentDTO
                                               {
-                                              SSN = s.SSN,
+                                                SSN  = s.SSN,
                                                 Name = s.Name
                                               }).ToList()
                           }).SingleOrDefault();
@@ -95,11 +101,11 @@ namespace API.Services
 
             Entities.Course course = new Entities.Course
             {
-                ID = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
-                TemplateID = courseTemplate.ID,
-                Semester = newCourse.Semester,
-                StartDate = newCourse.StartDate,
-                EndDate = newCourse.EndDate,
+                ID          = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
+                TemplateID  = courseTemplate.ID,
+                Semester    = newCourse.Semester,
+                StartDate   = newCourse.StartDate,
+                EndDate     = newCourse.EndDate,
                 MaxStudents = newCourse.MaxStudents
             };
             _db.Courses.Add(course);
@@ -115,7 +121,19 @@ namespace API.Services
                 Semester = course.Semester,
                 StartDate = newCourse.StartDate,
                 EndDate = newCourse.EndDate,
-                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID)
+                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID
+                                                             && x.IsActive == true
+                                                             && x.IsOnWaitingList == false),
+                Students = (from sr in _db.StudentEnrollment
+                            join s in _db.Students on sr.StudentID equals s.ID
+                            where sr.CourseID == course.ID
+                            && sr.IsActive == true
+                            && sr.IsOnWaitingList == false
+                            select new StudentDTO
+                            {
+                                SSN = s.SSN,
+                                Name = s.Name
+                            }).ToList()
             };
         }
         /// <summary>
@@ -152,17 +170,21 @@ namespace API.Services
 
             return new CourseDetailsDTO
             {
-                ID = course.ID,
-                TemplateID = courseTemplate.TemplateID,
-                Name = courseTemplate.Name,
-                Description = courseTemplate.Description,
-                Semester = course.Semester,
-                StartDate = updateCourse.StartDate,
-                EndDate = updateCourse.EndDate,
-                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == course.ID),
+                ID           = course.ID,
+                TemplateID   = courseTemplate.TemplateID,
+                Name         = courseTemplate.Name,
+                Description  = courseTemplate.Description,
+                Semester     = course.Semester,
+                StartDate    = updateCourse.StartDate,
+                EndDate      = updateCourse.EndDate,
+                StudentCount = _db.StudentEnrollment.Count(x => x.CourseID        == course.ID
+                                                             && x.IsActive        == true
+                                                             && x.IsOnWaitingList == false),
                 Students = (from sr in _db.StudentEnrollment
                                 join s in _db.Students on sr.StudentID equals s.ID
                                 where sr.CourseID == course.ID
+                                &&    sr.IsActive == true
+                                &&    sr.IsOnWaitingList == false
                                 select new StudentDTO
                                 {
                                 SSN = s.SSN,
@@ -232,7 +254,9 @@ namespace API.Services
                                Semester = c.Semester,
                                StartDate = c.StartDate,
                                EndDate = c.EndDate,
-                               StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == c.ID)
+                               StudentCount = _db.StudentEnrollment.Count(x => x.CourseID == c.ID 
+                                                                            && x.IsActive == true 
+                                                                            && x.IsOnWaitingList == false)
                            }).ToList();
 
             return courses;
@@ -256,6 +280,8 @@ namespace API.Services
             List<StudentDTO> students = (from se in _db.StudentEnrollment
                                          join s in _db.Students on se.StudentID equals s.ID
                                          where se.CourseID == courseID
+                                         &&    se.IsOnWaitingList == false 
+                                         &&    se.IsActive == true
                                          select new StudentDTO
                                          {
                                              SSN = s.SSN,
@@ -300,14 +326,20 @@ namespace API.Services
             {
                 _db.StudentEnrollment.Add(new Entities.StudentEnrollment
                 {
-                        StudentID       = student.ID,
-                        CourseID        = course.ID,
-                    IsOnWaitingList = false
+                    StudentID       = student.ID,
+                    CourseID        = course.ID,
+                    IsOnWaitingList = false,
+                    IsActive        = true
                 });
             }
             else if (studentEnrollment.IsOnWaitingList == true) // Student is on the waitinglist
             {
                 studentEnrollment.IsOnWaitingList = false;
+                studentEnrollment.IsActive        = true;
+            }
+            else if (studentEnrollment.IsActive == false) // If the student enrollment has been deleted
+            {
+                studentEnrollment.IsActive = true;
             }
             else // Student is already in the course
             {
@@ -318,7 +350,7 @@ namespace API.Services
 
             return new StudentDTO
             {
-                SSN = student.SSN,
+                SSN  = student.SSN,
                 Name = student.Name
             };
         }
@@ -336,7 +368,10 @@ namespace API.Services
 
             StudentDTO student = (from s in _db.Students
                                   join sr in _db.StudentEnrollment on s.ID equals sr.StudentID
-                                  where sr.CourseID == course.ID && s.SSN == studentSSN
+                                  where sr.CourseID == course.ID 
+                                  && s.SSN == studentSSN
+                                  && sr.IsActive == true
+                                  && sr.IsOnWaitingList == false   
                                   select new StudentDTO
                                   {
                                       SSN = s.SSN,
@@ -366,6 +401,7 @@ namespace API.Services
                                          join sr in _db.StudentEnrollment on s.ID equals sr.StudentID
                                          where sr.CourseID == course.ID
                                          && sr.IsOnWaitingList == true
+                                         && sr.IsActive == true
                                          select new StudentDTO
                                          {
                                              Name = s.Name,
@@ -374,5 +410,92 @@ namespace API.Services
             return students;
         }
 
+        /// <summary>
+        /// This method adds a given student to the waitinglist for a give course
+        /// </summary>
+        /// <param name="courseID">The course id</param>
+        /// <param name="newStudent">The new student</param>
+        /// <returns>The new student</returns>
+        public StudentDTO AddStudentToWaitinglist(int courseID, StudentViewModel newStudent)
+        {
+            var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
+            if (course == null)
+            {
+                throw new CourseNotFoundException();
+            }
+
+            var student = _db.Students.SingleOrDefault(x => x.SSN == newStudent.SSN);
+            if (student == null)
+            {
+                throw new StudentNotFoundException();
+            }
+
+            var studentEnrollment = _db.StudentEnrollment.SingleOrDefault(x => x.StudentID == student.ID
+                                                                            && x.CourseID == course.ID);
+            if (studentEnrollment == null)
+            {
+                _db.StudentEnrollment.Add(new Entities.StudentEnrollment
+                {
+                    CourseID = course.ID,
+                    StudentID = student.ID,
+                    IsActive = true,
+                    IsOnWaitingList = true
+                });
+            }
+            else if (studentEnrollment.IsOnWaitingList == true || studentEnrollment.IsActive == true)
+            {   
+                // Check if the student is already on the waitinglist or registered in the course
+                throw new StudentAlreadyRegisteredInCourseException();
+            }
+            else if (studentEnrollment.IsActive == false) // Check if the student as been removed
+            {
+                studentEnrollment.IsOnWaitingList = true;
+                studentEnrollment.IsActive        = true;
+            }
+
+            _db.SaveChanges();
+
+            return new StudentDTO
+            {
+                Name = student.Name,
+                SSN  = student.SSN
+            };
+        }
+
+        /// <summary>
+        /// This method gets a given student on a waitinglist for a give course
+        /// </summary>
+        /// <param name="courseID">The course id</param>
+        /// <param name="ssn">The ssn of the student</param>
+        /// <returns></returns>
+        public StudentDTO GetStudentOnWaitinglist(int courseID, string ssn)
+        {
+            var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
+            if (course == null)
+            {
+                throw new CourseNotFoundException();
+            }
+
+            var student = _db.Students.SingleOrDefault(x => x.SSN == ssn);
+            if (student == null)
+            {
+                throw new StudentNotFoundException();
+            }
+
+            var studentEnrollment = _db.StudentEnrollment.SingleOrDefault(x => x.CourseID == course.ID
+                                                                            && x.StudentID == student.ID
+                                                                            && x.IsOnWaitingList == true);
+            if (studentEnrollment == null)
+            {
+                throw new StudentNotFoundException();
+            }
+
+            return new StudentDTO
+            {
+                Name = student.Name,
+                SSN = student.SSN
+            };
+
+        }
     }
 }

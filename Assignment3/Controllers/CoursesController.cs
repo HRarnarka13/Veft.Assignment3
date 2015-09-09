@@ -239,6 +239,53 @@ namespace Assignment3.Controllers
             return Ok(_service.GetWaitinglistForACourse(id));
         }
 
+        /// <summary>
+        /// This method adds a given student to the waitinglist for a give course
+        /// </summary>
+        /// <param name="id">The course id</param>
+        /// <param name="newStudent">Location of the student on the waitinglist</param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("Courses/{id:int}/waitinglist")]
+        public IHttpActionResult AddStudentToWaitinglist(int id, StudentViewModel newStudent)
+        {
+            if (!ModelState.IsValid) { throw new HttpResponseException(HttpStatusCode.PreconditionFailed); }
+            try
+            {
+                StudentDTO student = _service.AddStudentToWaitinglist(id, newStudent);
+                var location = Url.Link("GetStudentOnWaitinglist", new { id = id, ssn = student.SSN });
+                return Created(location, student);
+            }
+            catch (CourseNotFoundException)
+            {
+                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+            }
+            catch (StudentNotFoundException)
+            {
+                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+            }
+            catch (StudentAlreadyRegisteredInCourseException)
+            {
+                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+            }
+            return null;
+        }
+
+        #endregion
+
+        #region Courses/{id}/waitinglist/{ssn}
+        /// <summary>
+        /// Get a given student on a waitinglist in a given course
+        /// </summary>
+        /// <param name="id">The course id</param>
+        /// <param name="ssn">The ssn of the student</param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("Courses/{id:int}/waitinglist/{ssn}", Name = "GetStudentOnWaitinglist")]
+        public IHttpActionResult GetStudentOnWaitinglist(int id, string ssn)
+        {
+            return Ok();
+        }
         #endregion
     }
 }
