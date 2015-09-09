@@ -57,6 +57,7 @@
     <Compile Include="Exceptions\CourseIsFullException.cs" />
     <Compile Include="Exceptions\CourseNotFoundException.cs" />
     <Compile Include="Exceptions\DeleteFromDatabaseException.cs" />
+    <Compile Include="Exceptions\StudentAlreadyRegisteredInCourseException.cs" />
     <Compile Include="Exceptions\StudentNotFoundException.cs" />
     <Compile Include="Exceptions\TemplateCourseNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
