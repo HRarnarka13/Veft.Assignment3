@@ -288,7 +288,8 @@ namespace API.Services
             }
 
             // Check if the student is already registered in the course
-            if (_db.StudentEnrollment.Any(x => x.StudentID == student.ID && x.CourseID == course.ID))
+            // todo. If he is on the waiting list add him. If he is not on the waiting list throw errro
+            if (_db.StudentEnrollment.Any(x => x.StudentID == student.ID && x.CourseID == course.ID && x.IsOnWaitingList ==))
             {
                 throw new StudentAlreadyRegisteredInCourseException();
             }
