@@ -87,8 +87,6 @@ namespace API.Services
         public CourseDetailsDTO AddCourse(CourseViewModel newCourse)
         {
             // Check if the course exists
-            var rass = _db.CourseTemplates;
-            var prump = rass.ToList();
             var courseTemplate = _db.CourseTemplates.Where(x => x.TemplateID == newCourse.TemplateID).SingleOrDefault();
             if (courseTemplate == null)
             {
