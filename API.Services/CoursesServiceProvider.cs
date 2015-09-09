@@ -87,7 +87,7 @@ namespace API.Services
         public CourseDetailsDTO AddCourse(CourseViewModel newCourse)
         {
             // Check if the course exists
-            var courseTemplate = _db.CourseTemplates.Where(x => x.TemplateID == newCourse.TemplateID).SingleOrDefault();
+            var courseTemplate = _db.CourseTemplates.SingleOrDefault(x => x.TemplateID == newCourse.TemplateID);
             if (courseTemplate == null)
             {
                 throw new TemplateCourseNotFoundException();
@@ -95,11 +95,12 @@ namespace API.Services
 
             Entities.Course course = new Entities.Course
             {
-                ID         = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
-                TemplateID = courseTemplate.ID,
-                Semester   = newCourse.Semester,
-                StartDate  = newCourse.StartDate,
-                EndDate    = newCourse.EndDate
+                ID          = _db.Courses.Any() ? _db.Courses.Max(x => x.ID) + 1 : 1,
+                TemplateID  = courseTemplate.ID,
+                Semester    = newCourse.Semester,
+                StartDate   = newCourse.StartDate,
+                EndDate     = newCourse.EndDate,
+                MaxStudents = newCourse.MaxStudents
             };
             _db.Courses.Add(course);
 
