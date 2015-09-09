@@ -287,6 +287,12 @@ namespace API.Services
                 throw new StudentNotFoundException();
             }
 
+            // Check if the student is already registered in the course
+            if (_db.StudentEnrollment.Any(x => x.StudentID == student.ID && x.CourseID == course.ID))
+            {
+                throw new StudentAlreadyRegisteredInCourseException();
+            }
+
             // Check if the course is full
             if (course.MaxStudents >= _db.StudentEnrollment.Count(x => x.CourseID == course.ID))
             {

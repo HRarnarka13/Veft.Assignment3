@@ -189,6 +189,10 @@ namespace Assignment3.Controllers
             {
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
+            catch (StudentAlreadyRegisteredInCourseException)
+            {
+                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+            }
             catch (CourseIsFullException)
             {
                 throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
