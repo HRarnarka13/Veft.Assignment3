@@ -272,7 +272,6 @@ namespace API.Services
         /// <returns>Details about the course, including a list of all students registerd in the course</returns>
         public StudentDTO AddStudentToCourse(int courseID, StudentViewModel newStudent)
         {
-            #region Exception handeling
             // Check if the course exists
             var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
             var courseDetails = _db.CourseTemplates.SingleOrDefault(x => x.ID == course.TemplateID);
@@ -294,29 +293,25 @@ namespace API.Services
                 throw new CourseIsFullException();
             }
 
-            var studentEnrollments = _db.StudentEnrollment.Where(x => x.StudentID == student.ID);
-
+            
             // Check if the student is already registered in the course
-            if (studentEnrollments.Any(x => x.CourseID == course.ID && x.IsOnWaitingList == false))
+            var studentEnrollment = _db.StudentEnrollment.SingleOrDefault(x => x.StudentID == student.ID && x.CourseID == course.ID);
+            if (studentEnrollment == null) // Student has not registered for the course
             {
-                throw new StudentAlreadyRegisteredInCourseException();
+                _db.StudentEnrollment.Add(new Entities.StudentEnrollment
+                {
+                        StudentID       = student.ID,
+                        CourseID        = course.ID,
+                    IsOnWaitingList = false
+                });
             }
-            #endregion
-
-            // Check if the student is on the waiting list
-            var studentEnrollment = studentEnrollments.SingleOrDefault(x => x.CourseID == course.ID && x.IsOnWaitingList);
-            if (studentEnrollment != null)
+            else if (studentEnrollment.IsOnWaitingList == true) // Student is on the waitinglist
             {
                 studentEnrollment.IsOnWaitingList = false;
             }
-            else
+            else // Student is already in the course
             {
-            _db.StudentEnrollment.Add(new Entities.StudentEnrollment
-            {
-                    StudentID       = student.ID,
-                    CourseID        = course.ID,
-                IsOnWaitingList = false
-            });
+                throw new StudentAlreadyRegisteredInCourseException();
             }
 
             _db.SaveChanges();
