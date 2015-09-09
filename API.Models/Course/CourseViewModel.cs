@@ -17,7 +17,7 @@ namespace API.Models
         /// Example: T-514-VEFT
         /// </summary>
         [Required]
-        public string CourseID { get; set; }
+        public string TemplateID { get; set; }
 
         /// <summary>
         /// The semester of the course

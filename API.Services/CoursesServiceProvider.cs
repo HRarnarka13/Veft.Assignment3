@@ -87,7 +87,7 @@ namespace API.Services
         public CourseDetailsDTO AddCourse(CourseViewModel newCourse)
         {
             // Check if the course exists
-            var courseTemplate = _db.CourseTemplates.SingleOrDefault(x => x.TemplateID == newCourse.CourseID);
+            var courseTemplate = _db.CourseTemplates.SingleOrDefault(x => x.TemplateID == newCourse.TemplateID);
             if (courseTemplate == null)
             {
                 throw new TemplateCourseNotFoundException();
