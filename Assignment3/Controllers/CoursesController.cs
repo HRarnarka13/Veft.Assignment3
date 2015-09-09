@@ -227,6 +227,18 @@ namespace Assignment3.Controllers
         #endregion
 
         #region Courses/{id}/waitinglist
+        /// <summary>
+        /// This method returns a list of students registered on the waiting list for a give course
+        /// </summary>
+        /// <param name="id">The course id</param>
+        /// <returns>A list of students of the waitinglist</returns>
+        [HttpGet]
+        [Route("Courses/{id:int}/waitinglist")]
+        public IHttpActionResult GetWaitinglistForACourse(int id)
+        {
+            return Ok(_service.GetWaitinglistForACourse(id));
+        }
+
         #endregion
     }
 }

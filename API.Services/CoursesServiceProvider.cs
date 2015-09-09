@@ -339,6 +339,31 @@ namespace API.Services
         }
 
         #endregion
+        /// <summary>
+        /// This method returns a list of students registered on the waiting list for a give course
+        /// </summary>
+        /// <param name="id">The course id</param>
+        /// <returns>A list of students of the waitinglist</returns>
+        public List<StudentDTO> GetWaitinglistForACourse(int courseID)
+        {
+            var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
+            if (course == null)
+            {
+                throw new CourseNotFoundException();
+            }
+
+            // Get list of students on the waiting list for the course
+            List<StudentDTO> students = (from s in _db.Students
+                                         join sr in _db.StudentEnrollment on s.ID equals sr.StudentID
+                                         where sr.CourseID == course.ID
+                                         && sr.IsOnWaitingList == true
+                                         select new StudentDTO
+                                         {
+                                             Name = s.Name,
+                                             SSN = s.SSN
+                                         }).ToList();
+            return students;
+        }
 
     }
 }
