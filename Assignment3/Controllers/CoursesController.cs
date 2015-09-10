@@ -287,9 +287,16 @@ namespace Assignment3.Controllers
             return Ok();
         }
         #endregion
+        /// <summary>
+        /// Function that removes a student from a course.
+        /// The student is not deleted from the database, just marked as inactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="ssn"></param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id:int}/students/{ssn}")]
-        public IHttpActionResult DeleteStudentFromCourse(int id, string ssn)
+        public void DeleteStudentFromCourse(int id, string ssn)
         {
             try
             {
