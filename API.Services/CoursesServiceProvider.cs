@@ -313,8 +313,9 @@ namespace API.Services
                 throw new StudentNotFoundException();
             }
 
+            var bla = _db.StudentEnrollment.Count(x => x.CourseID == course.ID);
             // Check if the course is full
-            if (course.MaxStudents >= _db.StudentEnrollment.Count(x => x.CourseID == course.ID))
+            if (course.MaxStudents <= _db.StudentEnrollment.Count(x => x.CourseID == course.ID))
             {
                 throw new CourseIsFullException();
             }
@@ -496,6 +497,38 @@ namespace API.Services
                 SSN = student.SSN
             };
 
+        }
+
+        /// <summary>
+        /// This method remove a student from a course by making him inactive
+        /// Note: We do not delete the row in the table we just set the student as inactive
+        /// </summary>
+        /// <param name="courseID">The course id</param>
+        /// <param name="studentSSN">The ssn of the student</param>
+        public void DeleteStudentFromCourse(int courseID, string studentSSN)
+        {
+            var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
+            if (course == null)
+            {
+                throw new CourseNotFoundException();
+            }
+
+            var student = _db.Students.SingleOrDefault(x => x.SSN == studentSSN);
+            if (student == null)
+            {
+                throw new StudentNotFoundException();
+            }
+
+            var studentEnrollment = _db.StudentEnrollment.SingleOrDefault(x => x.CourseID == course.ID
+                                                                            && x.StudentID == student.ID);
+            if (studentEnrollment == null)
+            {
+                throw new StudentNotFoundException();
+            }
+
+            studentEnrollment.IsActive = false;
+            studentEnrollment.IsOnWaitingList = false;
+            _db.SaveChanges();
         }
     }
 }
