@@ -11,6 +11,9 @@ using System.Web.Http.Description;
 
 namespace Assignment3.Controllers
 {
+    /// <summary>
+    /// This class provides the api calls for courses and student within those courses
+    /// </summary>
     [RoutePrefix("api/v1/courses")]
     public class CoursesController : ApiController
     {
@@ -267,11 +270,15 @@ namespace Assignment3.Controllers
                 throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
             }
         }
-
         #endregion
 
         #region Courses/{id}/waitinglist/{ssn}
-        #endregion
+        /// <summary>
+        /// This method removes a student from a course.
+        /// Note: It will not delete the entry in database it will only flag the student as inactive
+        /// </summary>
+        /// <param name="id">The course id</param>
+        /// <param name="ssn">The student ssn</param>
         [HttpDelete]
         [Route("{id:int}/students/{ssn}")]
         public void DeleteStudentFromCourse(int id, string ssn)
@@ -289,5 +296,6 @@ namespace Assignment3.Controllers
                 throw new HttpResponseException(HttpStatusCode.NotFound);
             }
         }
+        #endregion
     }
 }
