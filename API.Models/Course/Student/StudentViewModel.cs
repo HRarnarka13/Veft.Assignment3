@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
+    /// <summary>
+    /// This class represents a student when the client is sends a student to the server
+    /// </summary>
     public class StudentViewModel
     {
         /// <summary>
