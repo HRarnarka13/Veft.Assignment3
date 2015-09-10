@@ -233,7 +233,7 @@ namespace Assignment3.Controllers
         /// <param name="id">The course id</param>
         /// <returns>A list of students of the waitinglist</returns>
         [HttpGet]
-        [Route("Courses/{id:int}/waitinglist")]
+        [Route("{id:int}/waitinglist")]
         public IHttpActionResult GetWaitinglistForACourse(int id)
         {
             return Ok(_service.GetWaitinglistForACourse(id));
@@ -246,7 +246,7 @@ namespace Assignment3.Controllers
         /// <param name="newStudent">Location of the student on the waitinglist</param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Courses/{id:int}/waitinglist")]
+        [Route("{id:int}/waitinglist")]
         public IHttpActionResult AddStudentToWaitinglist(int id, StudentViewModel newStudent)
         {
             if (!ModelState.IsValid) { throw new HttpResponseException(HttpStatusCode.PreconditionFailed); }
@@ -281,11 +281,28 @@ namespace Assignment3.Controllers
         /// <param name="ssn">The ssn of the student</param>
         /// <returns></returns>
         [HttpGet]
-        [Route("Courses/{id:int}/waitinglist/{ssn}", Name = "GetStudentOnWaitinglist")]
+        [Route("{id:int}/waitinglist/{ssn}", Name = "GetStudentOnWaitinglist")]
         public IHttpActionResult GetStudentOnWaitinglist(int id, string ssn)
         {
             return Ok();
         }
         #endregion
+        [HttpDelete]
+        [Route("{id:int}/students/{ssn}")]
+        public IHttpActionResult DeleteStudentFromCourse(int id, string ssn)
+        {
+            try
+            {
+                _service.DeleteStudentFromCourse(id, ssn); // this may throw a not found exception
+            }
+            catch (CourseNotFoundException)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+            catch(StudentNotFoundException)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
+        }
     }
 }
