@@ -274,11 +274,12 @@ namespace Assignment3.Controllers
 
         #region Courses/{id}/waitinglist/{ssn}
         /// <summary>
-        /// This method removes a student from a course.
-        /// Note: It will not delete the entry in database it will only flag the student as inactive
+        /// Function that removes a student from a course.
+        /// The student is not deleted from the database, just marked as inactive
         /// </summary>
         /// <param name="id">The course id</param>
         /// <param name="ssn">The student ssn</param>
+        /// <returns></returns>
         [HttpDelete]
         [Route("{id:int}/students/{ssn}")]
         public void DeleteStudentFromCourse(int id, string ssn)
