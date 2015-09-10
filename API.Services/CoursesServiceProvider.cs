@@ -300,7 +300,6 @@ namespace API.Services
         {
             // Check if the course exists
             var course = _db.Courses.SingleOrDefault(x => x.ID == courseID);
-            var courseDetails = _db.CourseTemplates.SingleOrDefault(x => x.ID == course.TemplateID);
             if (course == null)
             {
                 throw new CourseNotFoundException();
@@ -313,13 +312,13 @@ namespace API.Services
                 throw new StudentNotFoundException();
             }
 
-            var bla = _db.StudentEnrollment.Count(x => x.CourseID == course.ID);
             // Check if the course is full
-            if (course.MaxStudents <= _db.StudentEnrollment.Count(x => x.CourseID == course.ID))
+            if (course.MaxStudents <= _db.StudentEnrollment.Count(x => x.CourseID == course.ID 
+                                                                    && x.IsActive == true 
+                                                                    && x.IsOnWaitingList == false))
             {
                 throw new CourseIsFullException();
             }
-
             
             // Check if the student is already registered in the course
             var studentEnrollment = _db.StudentEnrollment.SingleOrDefault(x => x.StudentID == student.ID && x.CourseID == course.ID);

@@ -52,7 +52,7 @@ namespace Assignment3.Controllers
             }
             catch (TemplateCourseNotFoundException)
             {
-                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+                throw new HttpResponseException(HttpStatusCode.NotFound);
             }
 
         }
@@ -252,40 +252,25 @@ namespace Assignment3.Controllers
             if (!ModelState.IsValid) { throw new HttpResponseException(HttpStatusCode.PreconditionFailed); }
             try
             {
-                StudentDTO student = _service.AddStudentToWaitinglist(id, newStudent);
-                var location = Url.Link("GetStudentOnWaitinglist", new { id = id, ssn = student.SSN });
-                return Created(location, student);
+                return Ok(_service.AddStudentToWaitinglist(id, newStudent));
             }
             catch (CourseNotFoundException)
             {
-                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+                throw new HttpResponseException(HttpStatusCode.NotFound);
             }
             catch (StudentNotFoundException)
             {
-                throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
+                throw new HttpResponseException(HttpStatusCode.NotFound);
             }
             catch (StudentAlreadyRegisteredInCourseException)
             {
                 throw new HttpResponseException(HttpStatusCode.PreconditionFailed);
             }
-            return null;
         }
 
         #endregion
 
         #region Courses/{id}/waitinglist/{ssn}
-        /// <summary>
-        /// Get a given student on a waitinglist in a given course
-        /// </summary>
-        /// <param name="id">The course id</param>
-        /// <param name="ssn">The ssn of the student</param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("{id:int}/waitinglist/{ssn}", Name = "GetStudentOnWaitinglist")]
-        public IHttpActionResult GetStudentOnWaitinglist(int id, string ssn)
-        {
-            return Ok();
-        }
         #endregion
         /// <summary>
         /// Function that removes a student from a course.
